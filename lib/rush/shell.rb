@@ -124,9 +124,9 @@ module Rush
 			box = eval("#{receiver}.box", @pure_binding) rescue nil
 			if path and box
 				(box[path].methods - Object.methods).select do |e|
-					e.match(/^#{Regexp.escape(partial_name)}/)
+					e.to_s.match(/^#{Regexp.escape(partial_name)}/)
 				end.map do |e|
-					(pre || '') + receiver + dot + e
+					(pre || '') + receiver + dot + e.to_s
 				end
 			end
 		end
