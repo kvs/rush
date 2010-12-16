@@ -88,10 +88,13 @@ class Rush::Connection::Remote
     transmit(:action => 'signal_process', :pid => pid, :signal => signal)
   end
   
-	def bash(command, user=nil, stdin=nil, background, reset_environment)
-    # transmit(:action => 'bash', :payload => command, :user => user, :stdin => stdin)
-    transmit(:action => 'bash', :payload => command, :user => user, :background => background, :reset_environment => reset_environment)
+  def bash(command, user, background, reset_environment)
+		transmit(:action => 'bash', :payload => command, :user => user, :background => background, :reset_environment => reset_environment)
 	end
+  # def bash(command, user=nil, stdin=nil, background, reset_environment)
+  #     # transmit(:action => 'bash', :payload => command, :user => user, :stdin => stdin)
+  #     transmit(:action => 'bash', :payload => command, :user => user, :background => background, :reset_environment => reset_environment)
+  # end
 
 	# Given a hash of parameters (converted by the method call on the connection
 	# object), send it across the wire to the RushServer listening on the other
@@ -100,24 +103,19 @@ class Rush::Connection::Remote
 	  
 		begin
 		  ensure_tunnel
-	    
       client = TCPSocket.open(tunnel.host, tunnel.port)
-      handshake =  client.puts("#{config.credentials_user}:#{config.credentials_password}")
-      conresp = client.recvfrom( 5000 )[0].chomp
-      pubkey = OpenSSL::PKey::RSA.new(conresp)
-    
-      sha1 = Digest::SHA1.hexdigest(params.to_yaml)
-      load = pubkey.public_encrypt("#{sha1}*#{params.to_yaml}")
-      
-      client.puts(load)
+      client.puts(params.to_yaml)
       
       response = client.recvfrom( 5000 )[0].chomp
-	  rescue => e
-      # raise Rush::FailedTransmit
+      response
+
+    rescue => e
+          # raise Rush::FailedTransmit
       puts "something terrible happend ..."
       puts e
-      client.close
-  	end
+      client.close   
+    end
+    
     
   end
 

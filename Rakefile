@@ -25,7 +25,7 @@ Jeweler::Tasks.new do |gem|
 	gem.files = FileList["[A-Z]*", "{bin,lib,spec}/**/*"]
 	
   gem.authors = ["adamwiggins"]
-  gem.executables = %w(rush)
+  gem.executables = %w(rush rushd)
   gem.default_executable = "rush"
   # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
 end

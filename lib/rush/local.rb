@@ -324,7 +324,8 @@ class Rush::Connection::Local
 			out, err = sh.execute "cd /; sudo -H -u #{user} \"#{shell}\"", :stdin => command
 		else
 		  # if !stdin
-		  out, err = sh.execute command
+      # out, err = sh.execute command
+		  out, err = sh.execute shell, :stdin => command
 		  #        
 		  #      else
         # out, err = sh.execute command, :stdin => stdin
@@ -399,7 +400,7 @@ class Rush::Connection::Local
 			when 'processes'      then YAML.dump(processes)
 			when 'process_alive'  then process_alive(params[:pid]) ? '1' : '0'
 			when 'kill_process'   then kill_process(params[:pid].to_i, YAML.load(params[:payload]))
-			when 'bash'           then bash(params[:payload], params[:user], params[:stdin], params[:background] == 'true', params[:reset_environment] == 'true')
+			when 'bash'           then bash(params[:payload], params[:user], params[:background] == 'true', params[:reset_environment] == 'true')
 		else
 			raise UnknownAction
 		end

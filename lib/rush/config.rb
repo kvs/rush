@@ -79,8 +79,8 @@ class Rush::Config
   end
   
   def generate_keys
-    priv_key = OpenSSL::RSA.new(1024)
-    pub_key = priv_key.public_key
+    # priv_key = OpenSSL::RSA.new(1024)
+    #  pub_key = priv_key.public_key
   end
 
 	# Credentials is the client-side equivalent of passwords.  It contains only

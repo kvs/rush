@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+
+require File.dirname(__FILE__) + '/../lib/rush'
+require File.dirname(__FILE__) + '/../lib/rush/server'
+
+
+EventMachine::run {
+  @host = "127.0.0.1"
+  @port = Rush::Config::DefaultPort
+  EventMachine::start_server @host, @port, RushServer
+}

@@ -34,11 +34,10 @@ class Rush::SshTunnel
 		establish_tunnel(options)
 	end
   def launch_rushd
-        
-  		display "Launching rushd"
-  		#setup a routine to follow to provission the server
-  		ssh("if [`which rushd grep | wc -l` -le 1 ]; then exit;")
-  		ssh("if [ `ps aux | grep rushd | grep -v grep | wc -l` -ge 1 ]; then exit; fi; rushd > /dev/null 2>&1 &")
+      display "Launching rushd"
+      ssh("if [ `ps aux | grep rushd | grep -v grep | wc -l` -ge 1 ]; then exit; fi; rushd > /dev/null 2>&1 &")  
+  	  # ssh("if [`which rushd grep | wc -l` -le 1 ]; then exit; fi;")
+  		
   end
 	def push_credentials
 		display "Pushing credentials"
@@ -104,8 +103,8 @@ class Rush::SshTunnel
 	def ssh_tunnel_command_without_stall
 		options = tunnel_options
 		raise NoPortSelectedYet unless options[:local_port]
-		"ssh -f -N -L #{options[:local_port]}:127.0.0.1:#{options[:remote_port]} #{options[:ssh_host]}"
-    # "ssh -f -L #{options[:local_port]}:127.0.0.1:#{options[:remote_port]} #{options[:ssh_host]}"
+    # "ssh -f -N -L #{options[:local_port]}:127.0.0.1:#{options[:remote_port]} #{options[:ssh_host]}"
+    "ssh -f -L #{options[:local_port]}:127.0.0.1:#{options[:remote_port]} #{options[:ssh_host]}"
 	end
 
 	def ssh_stall_command(options={})
@@ -119,8 +118,8 @@ class Rush::SshTunnel
 	end
 
 	def ssh_tunnel_command(options={})
-	  
-	  ssh_tunnel_command_without_stall
+	  ssh_tunnel_command_without_stall + ' "' + ssh_stall_command(options) + '"'
+    # ssh_tunnel_command_without_stall
     # ssh_tunnel_command_without_stall + ' "' + ssh_stall_command(options) + '"'
 	end
 
