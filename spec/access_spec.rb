@@ -94,7 +94,6 @@ describe Rush::Access do
 			:other_can_read => 0, :other_can_write => 0, :other_can_execute => 0,
 		}
 	end
-
 	it "unserializes from a hash" do
 		@access.from_hash(:user_can_read => '1')
 		@access.user_can_read.should == true

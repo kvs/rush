@@ -1,18 +1,19 @@
-require 'rubygems'
-require 'bundler'
+require "rubygems"
+require "bundler/setup"
 
 begin
-  Bundler.setup(:default, :development)
-rescue Bundler::BundlerError => e
+  Bundler.setup(:default, :ci)
+rescue Exception => e
   $stderr.puts e.message
   $stderr.puts "Run `bundle install` to install missing gems"
   exit e.status_code
 end
+
 require 'rake'
 
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
-  gem.name = "rush"
+  gem.name = "mush"
   gem.summary = "A Ruby replacement for bash+ssh."
 	gem.description = "A Ruby replacement for bash+ssh, providing both an interactive shell and a library.  Manage both local and remote unix systems from a single client."
   gem.email = "mjording@opengotham.com"
@@ -23,7 +24,7 @@ Jeweler::Tasks.new do |gem|
   gem.add_dependency "thin"
  	gem.add_dependency "session"
 	gem.files = FileList["[A-Z]*", "{bin,lib,spec}/**/*"]
-  gem.authors = ["adamwiggins"]
+  gem.authors = ["adamwiggins","mjording"]
   gem.executables = %w(rush rushd)
   gem.default_executable = "rush"
   # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
