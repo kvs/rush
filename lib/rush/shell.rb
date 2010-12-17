@@ -153,7 +153,7 @@ module Rush
 			gvars = eval('global_variables', @pure_binding)
 			ivars = eval('instance_variables', @pure_binding)
 			(lvars + gvars + ivars).select do |e|
-				e.match(/^#{Regexp.escape(partial_name)}/)
+				e.to_s.match(/^#{Regexp.escape(partial_name)}/)
 			end.map do |e|
 				(pre || '') + e.to_s
 			end

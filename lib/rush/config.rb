@@ -73,15 +73,6 @@ class Rush::Config
 		end
 		hash
 	end
-	
-	def keys_file
-	  dir['keys_file']
-  end
-  
-  def generate_keys
-    # priv_key = OpenSSL::RSA.new(1024)
-    #  pub_key = priv_key.public_key
-  end
 
 	# Credentials is the client-side equivalent of passwords.  It contains only
 	# one username:password combination that is transmitted to the server when
@@ -89,8 +80,6 @@ class Rush::Config
 	def credentials_file
 		dir['credentials']
 	end
-	
-
 
 	def credentials
 		credentials_file.lines.first.split(":", 2)

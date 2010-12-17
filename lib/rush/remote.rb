@@ -1,5 +1,4 @@
 require 'yaml'
-require "socket"
 
 # This class it the mirror of Rush::Connection::Local.  A Rush::Box which is
 # not localhost has a remote connection, which it can use to convert method
@@ -13,7 +12,6 @@ class Rush::Connection::Remote
 	def initialize(host)
 		@host = host
 		@tunnel = Rush::SshTunnel.new(host)
-		
 	end
 
 	def write_file(full_path, contents)
@@ -63,9 +61,10 @@ class Rush::Connection::Remote
 	def stat(full_path)
 		YAML.load(transmit(:action => 'stat', :full_path => full_path))
 	end
-
+	
 	def set_access(full_path, access)
-		transmit access.to_hash.merge(:action => 'set_access', :full_path => full_path)
+	  transmit access.dup.merge(:action => 'set_access', :full_path => full_path){|k,v1,v2| v1+v2}
+	 	
 	end
 
 	def size(full_path)
@@ -83,41 +82,51 @@ class Rush::Connection::Remote
 	def kill_process(pid, options={})
 		transmit(:action => 'kill_process', :pid => pid, :payload => YAML.dump(options))
 	end
-	
-  def signal_process(pid, signal)
-    transmit(:action => 'signal_process', :pid => pid, :signal => signal)
-  end
-  
-  def bash(command, user, background, reset_environment)
-		transmit(:action => 'bash', :payload => command, :user => user, :background => background, :reset_environment => reset_environment)
+
+	def bash(command, user, background)
+		transmit(:action => 'bash', :payload => command, :user => user, :background => background)
 	end
-  # def bash(command, user=nil, stdin=nil, background, reset_environment)
-  #     # transmit(:action => 'bash', :payload => command, :user => user, :stdin => stdin)
-  #     transmit(:action => 'bash', :payload => command, :user => user, :background => background, :reset_environment => reset_environment)
-  # end
 
 	# Given a hash of parameters (converted by the method call on the connection
 	# object), send it across the wire to the RushServer listening on the other
 	# side.  Uses http basic auth, with credentials fetched from the Rush::Config.
 	def transmit(params)
-	  
-		begin
-		  ensure_tunnel
-      client = TCPSocket.open(tunnel.host, tunnel.port)
-      client.puts(params.to_yaml)
-      
-      response = client.recvfrom( 5000 )[0].chomp
-      response
+		ensure_tunnel
 
-    rescue => e
-          # raise Rush::FailedTransmit
-      puts "something terrible happend ..."
-      puts e
-      client.close   
-    end
-    
-    
-  end
+		require 'net/http'
+
+		
+
+		uri = "/?"
+		params.each do |key, value|
+			uri += "#{key}=#{value}&" unless key == :payload
+		end
+
+		req = Net::HTTP::Post.new(uri)
+		req.basic_auth config.credentials_user, config.credentials_password
+
+		Net::HTTP.start(tunnel.host, tunnel.port) do |http|
+			res = http.request(req, params[:payload])
+			process_result(res.code, res.body)
+		end
+	rescue EOFError
+		raise Rush::RushdNotRunning
+	end
+
+	# Take the http result of a transmit and raise an error, or return the body
+	# of the result when valid.
+	def process_result(code, body)
+		raise Rush::NotAuthorized if code == "401"
+
+		if code == "400"	
+			klass, message = parse_exception(body)
+			raise klass, "#{host}:#{message}"
+		end
+
+		raise Rush::FailedTransmit if code != "200"
+
+		body
+	end
 
 	# Parse an exception returned from the server, with the class name on the
 	# first line and the message on the second.
@@ -132,9 +141,7 @@ class Rush::Connection::Remote
 	def ensure_tunnel(options={})
 		tunnel.ensure_tunnel(options)
 	end
-	def ensure_server(options={})
-		tunnel.ensure_server(options)
-	end
+
 	# Remote connections are alive when the box on the other end is responding
 	# to commands.
 	def alive?

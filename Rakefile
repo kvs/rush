@@ -17,13 +17,12 @@ Jeweler::Tasks.new do |gem|
 	gem.description = "A Ruby replacement for bash+ssh, providing both an interactive shell and a library.  Manage both local and remote unix systems from a single client."
   gem.email = "mjording@opengotham.com"
   gem.homepage = "http://rush.heroku.com/"
-  # gem.rubyforge_project = "ruby-shell"
 	gem.has_rdoc = true
-
-	gem.add_dependency 'session'
-	gem.add_dependency 'rspec'
+	gem.add_development_dependency "rspec"
+  gem.add_development_dependency "yard"
+  gem.add_dependency "thin"
+ 	gem.add_dependency "session"
 	gem.files = FileList["[A-Z]*", "{bin,lib,spec}/**/*"]
-	
   gem.authors = ["adamwiggins"]
   gem.executables = %w(rush rushd)
   gem.default_executable = "rush"

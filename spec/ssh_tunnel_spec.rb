@@ -13,6 +13,7 @@ describe Rush::SshTunnel do
 
 	it "ensure_tunnel sets everything up for the tunnel when one does not already exist" do
 		@tunnel.should_receive(:push_credentials)
+		@tunnel.should_receive(:launch_rushd)
 		@tunnel.should_receive(:establish_tunnel)
 		@tunnel.ensure_tunnel
 	end
@@ -79,12 +80,12 @@ describe Rush::SshTunnel do
 			:remote_port => 456,
 			:ssh_host => 'example.com'
 		)
-		@tunnel.ssh_tunnel_command_without_stall.should == "ssh -f -N -L 123:127.0.0.1:456 example.com"
+		@tunnel.ssh_tunnel_command_without_stall.should == "ssh -f -L 123:127.0.0.1:456 example.com"
 	end
 
 	it "combines the tunnel command without stall and the stall command into the final command" do
+		@tunnel.should_receive(:ssh_tunnel_command_without_stall).and_return('ssh command')
 		@tunnel.should_receive(:ssh_stall_command).and_return('sleep 123')
-    @tunnel.should_receive(:ssh_tunnel_command_without_stall).and_return('ssh command')
 		@tunnel.ssh_tunnel_command.should == 'ssh command "sleep 123"'
 	end
 
@@ -97,6 +98,13 @@ describe Rush::SshTunnel do
 	it "push_credentials uses ssh to append to remote host's passwords file" do
 		@tunnel.should_receive(:ssh_append_to_credentials).and_return(true)
 		@tunnel.push_credentials
+	end
+
+	it "launches rushd on the remote host via ssh" do
+		@tunnel.should_receive(:ssh) do |cmd|
+			cmd.should match(/rushd/)
+		end
+		@tunnel.launch_rushd
 	end
 
 	it "tunnel_alive? checks whether a tunnel is still up" do
