@@ -177,9 +177,5 @@ class Rush::Entry
 		full_path == other.full_path and box == other.box
 	end
 
-private
 
-	def stat
-		connection.stat(full_path)
-	end
 end

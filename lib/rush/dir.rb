@@ -157,4 +157,9 @@ class Rush::Dir < Rush::Entry
 	def entries
 		contents
 	end
+	
+	
+  def stat
+    connection.stat(full_path)
+  end
 end

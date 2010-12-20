@@ -136,7 +136,7 @@ class Rush::Connection::Local
 	# Fetch the size of a dir, since a standard file stat does not include the
 	# size of the contents.
 	def size(full_path)
-		`du -sb #{Rush.quote(full_path)}`.match(/(\d+)/)[1].to_i
+		`du -s #{Rush.quote(full_path)}`.match(/(\d+)/)[1].to_i
 	end
 
 	# Get the list of processes as an array of hashes.

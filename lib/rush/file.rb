@@ -15,6 +15,10 @@ class Rush::File < Rush::Entry
 	def size
 		stat[:size]
 	end
+	
+	def stat
+	  connection.stat(full_path)
+  end
 
 	# Raw contents of the file.  For non-text files, you probably want to avoid
 	# printing this on the screen.

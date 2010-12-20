@@ -91,7 +91,7 @@ class Rush::SshTunnel
 	def ssh_tunnel_command_without_stall
 		options = tunnel_options
 		raise NoPortSelectedYet unless options[:local_port]
-		"ssh -f -L  #{options[:local_port]}:127.0.0.1:#{options[:remote_port]} #{options[:ssh_host]}"
+		"ssh -f -L -t #{options[:local_port]}:127.0.0.1:#{options[:remote_port]} #{options[:ssh_host]}"
 	end
 
 	def ssh_stall_command(options={})
