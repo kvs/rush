@@ -1,4 +1,4 @@
-require File.dirname(__FILE__) + '/base'
+require 'spec_helper'
 
 describe Rush::Access do
 	before do
