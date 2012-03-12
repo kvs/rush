@@ -7,7 +7,7 @@ require 'timeout'
 # heart of rush's internals.  (Users of the rush shell or library need never
 # access the connection object directly, so the docs herein are intended for
 # developers wishing to modify rush.)
-class Rush::Connection::Local
+class Rush::Connection
 	include DRbUndumped
 
 	# Write raw bytes to a file.

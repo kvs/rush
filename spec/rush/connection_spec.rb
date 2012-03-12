@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe Rush::Connection::Local do
+describe Rush::Connection do
 	before do
 		@sandbox_dir = "/tmp/rush_spec.#{Process.pid}"
 		system "rm -rf #{@sandbox_dir}; mkdir -p #{@sandbox_dir}"
 
-		@con = Rush::Connection::Local.new
+		@con = Rush::Connection.new
 	end
 
 	after do

@@ -105,7 +105,7 @@ class Rush::Box
 
 	def make_connection    # :nodoc:
 		if host == 'localhost'
-			Rush::Connection::Local.new
+			Rush::Connection.new
 		else
 			if @drb.nil?
 				DRb.start_service # FIXME: are we listening on a port? why?

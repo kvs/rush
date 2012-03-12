@@ -38,7 +38,7 @@ class Rush::Entry
 	end
 
 	def connection
-		box ? box.connection : Rush::Connection::Local.new
+		box ? box.connection : Rush::Connection.new
 	end
 
 	# The parent dir.  For example, box['/etc/hosts'].parent == box['etc/']
