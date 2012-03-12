@@ -1,6 +1,5 @@
-*.gem
 .bundle
+.vagrant
+.yardoc
 Gemfile.lock
-pkg/*
-rdoc
-pkg
+doc
