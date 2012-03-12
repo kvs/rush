@@ -59,6 +59,21 @@ module Rush
 	def self.quote(path)
 		path.gsub(/(?=[^a-zA-Z0-9_.\/\-\x7F-\xFF\n])/n, '\\').gsub(/\n/, "'\n'").sub(/^$/, "''")
 	end
+
+	# Return a String of the source code for the entire Rush library.
+	def self.library_data
+		parent = ::File.dirname(__FILE__)
+		@data ||= ::File.readlines(__FILE__).collect do |line|
+		  next if line.match(/^require '(rubygems|drbssh)'\n/)
+		  next if line.match(/^\$LOAD_PATH/)
+
+		  if line.match(/require ['"](.+)['"]\n/)
+		    ::File.read("#{parent}/#{$1}.rb")
+		  else
+		    line
+		  end
+		end.join("")
+	end
 end
 
 $LOAD_PATH.unshift(File.dirname(__FILE__))
