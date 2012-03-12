@@ -67,7 +67,6 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 
 require 'drbssh'
 require 'rush/exceptions'
-require 'rush/config'
 require 'rush/commands'
 require 'rush/access'
 require 'rush/entry'
@@ -83,4 +82,3 @@ require 'rush/process'
 require 'rush/process_set'
 require 'rush/local'
 require 'rush/box'
-require 'rush/embeddable_shell'
