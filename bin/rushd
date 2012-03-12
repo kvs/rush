@@ -1,6 +1,0 @@
-#!/usr/bin/env ruby
-
-require File.dirname(File.realpath(__FILE__)) + '/../lib/rush'
-
-DRb.start_service(ARGV[0], Rush::Box.new('localhost'))
-DRb.thread.join
