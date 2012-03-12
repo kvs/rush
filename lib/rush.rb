@@ -1,5 +1,10 @@
 require 'rubygems'
 
+# Convenience method for accessing a box quickly
+def Rush(host = 'localhost')
+	Rush::Box.new(host)
+end
+
 # The top-level Rush module has some convenience methods for accessing the
 # local box.
 module Rush
