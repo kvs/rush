@@ -92,13 +92,6 @@ class Rush::Box
 		connection.alive?
 	end
 
-	# This is called automatically the first time an action is invoked, but you
-	# may wish to call it manually ahead of time in order to have the tunnel
-	# already set up and running.
-	def establish_connection(options={})
-		connection
-	end
-
 	def connection         # :nodoc:
 		@connection ||= make_connection
 	end
