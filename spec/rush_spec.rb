@@ -1,28 +1,14 @@
 require 'spec_helper'
 
 describe Rush do
-	it "fetches a local file path" do
-		Rush['/etc/hosts'].full_path.should == '/etc/hosts'
+	it "has a shortcut to localhost" do
+		Rush.local.should be_an_instance_of Rush::Box
 	end
 
-	it "fetches the dir of __FILE__" do
-		Rush.dir(__FILE__).name.should == 'spec'
-	end
+	it "quotes paths"
 
-	it "fetches the launch dir (aka current working directory or pwd)" do
-		Dir.stub!(:pwd).and_return('/tmp')
-		Rush.launch_dir.should == Rush::Box.new['/tmp/']
-	end
-
-	it "runs a bash command" do
-		Rush.bash('echo hi').should == "hi\n"
-	end
-
-	it "gets the list of local processes" do
-		Rush.processes.should be_kind_of(Rush::ProcessSet)
-	end
-
-	it "gets my process" do
-		Rush.my_process.pid.should == Process.pid
+	it "returns entire library as a String" do
+		Rush.library_data.should be_an_instance_of String
+		Rush.library_data.size.should > 2000
 	end
 end
