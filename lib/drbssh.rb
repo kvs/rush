@@ -40,6 +40,11 @@ module DRb
 
 			if client
 				host, cmd = self.class.parse_uri(uri)
+
+				# Gather a representation of this file, which we will later pump into the remote process
+				data = File.read(__FILE__)
+				data += "\nDRb.start_service('#{uri}', binding); DRb.thread.join\n"
+
 				ctprd, ctpwr = IO.pipe
 				ptcrd, ptcwr = IO.pipe
 
@@ -51,13 +56,22 @@ module DRb
 					$stdin.reopen(ptcrd)
 					$stdout.reopen(ctpwr)
 
-					exec("ssh", host, cmd, uri)
+					# Open a connection to a remote Ruby, and assume we can read stuff from STDIN, which will be written by
+					# the parent.
+					if cmd
+						exec("ssh", host, cmd, '-rzlib', '-e', "\"eval STDIN.read(#{data.bytesize})\"")
+					else
+						exec("ssh", host, "ruby", '-rzlib', '-e', "\"eval STDIN.read(#{data.bytesize})\"")
+					end
 					exit
 				end
 
 				# parent
 				ctpwr.close
 				ptcrd.close
+
+				# Pump initial code into the remote Ruby-process, so a full two-way DRb-session can be established.
+				ptcwr.write(data)
 
 				@in_fp	= ctprd
 				@out_fp = ptcwr
