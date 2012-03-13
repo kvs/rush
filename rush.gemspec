@@ -20,7 +20,6 @@ Gem::Specification.new do |s|
 	s.extra_rdoc_files = %w(README.rdoc)
 
 	s.add_development_dependency "rspec", ["~> 2.8.0"]
-	s.add_development_dependency "guard-bundler"
 	s.add_development_dependency "guard-rspec"
 	s.add_development_dependency "simplecov"
 	s.add_development_dependency "yard",  ["~> 0.7.0"]
