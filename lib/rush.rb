@@ -1,5 +1,3 @@
-require 'rubygems'
-
 # Convenience method for accessing a box quickly
 def Rush(host = 'localhost')
 	Rush::Box.new(host)
@@ -21,15 +19,12 @@ module Rush
 	# Return a String of the source code for the entire Rush library.
 	def self.library_data
 		parent = ::File.dirname(__FILE__)
-		@data ||= ::File.readlines(__FILE__).collect do |line|
-		  next if line.match(/^require '(rubygems|drbssh)'\n/)
-		  next if line.match(/^\$LOAD_PATH/)
+		@data = "module Rush; end\n"
+		@data += ::File.readlines(__FILE__).collect do |line|
+			next if line.match(/^require 'drbssh'\n/)
+			next if line.match(/^\$LOAD_PATH/)
 
-		  if line.match(/require ['"](.+)['"]\n/)
-		    ::File.read("#{parent}/#{$1}.rb")
-		  else
-		    line
-		  end
+			::File.read("#{parent}/#{$1}.rb") if line.match(/require ['"](.+)['"]\n/)
 		end.join("")
 	end
 end

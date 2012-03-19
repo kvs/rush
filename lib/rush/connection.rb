@@ -1,6 +1,7 @@
 require 'fileutils'
 require 'yaml'
 require 'timeout'
+require 'drb'
 
 # Rush::Box uses a connection object to execute all rush commands.  If the box
 # is local, Rush::Connection::Local is created.  The local connection is the

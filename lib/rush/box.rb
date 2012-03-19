@@ -101,10 +101,9 @@ class Rush::Box
 			Rush::Connection.new
 		else
 			if @drb.nil?
-				DRb.start_service # FIXME: are we listening on a port? why?
-				@drb = DRbObject.new_with_uri("drbssh://#{self.host}/ruby")
+				DRb.start_service('drbssh://') if DRb.primary_server.nil?
+				@drb = DRbObject.new_with_uri("drbssh://#{self.host}")
 				@drb.eval Rush.library_data
-
 			end
 			@drb.eval("Rush::Connection.new")
 		end

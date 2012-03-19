@@ -25,4 +25,5 @@ Gem::Specification.new do |s|
 	s.add_development_dependency "yard",  ["~> 0.7.0"]
 
 	s.add_runtime_dependency "session"
+	s.add_runtime_dependency "drbssh"
 end
