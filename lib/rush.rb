@@ -13,6 +13,8 @@ module Rush
 
 	# Return a String of the source code for the entire Rush library.
 	def self.library_data
+		return @data unless @data.nil?
+
 		parent = ::File.dirname(__FILE__)
 		@data = "module Rush; end\n"
 		@data += ::File.readlines(__FILE__).collect do |line|
@@ -21,6 +23,7 @@ module Rush
 
 			::File.read("#{parent}/#{$1}.rb") if line.match(/require ['"](.+)['"]\n/)
 		end.join("")
+		@data
 	end
 end
 
