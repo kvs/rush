@@ -73,9 +73,8 @@ class Rush::Connection
 		FileUtils.cp_r(src, dst)
 		true
 	rescue Errno::ENOENT
+		raise Rush::DoesNotExist, src unless File.exist?(src)
 		raise Rush::DoesNotExist, File.dirname(dst)
-	rescue RuntimeError
-		raise Rush::DoesNotExist, src
 	end
 
 	# Create an in-memory archive (tgz) of a file or dir, which can be
