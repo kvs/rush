@@ -49,11 +49,11 @@ class Rush::Process
 		box.connection.kill_process(pid, options)
 	end
 	
-  # Send a signal to the process.
-  def signal(sig)
-    box.connection.signal_process(pid, sig)
-  end
-  
+	# Send a signal to the process.
+	def signal(sig)
+		box.connection.signal_process(pid, sig)
+	end
+
 	def ==(other)       # :nodoc:
 		pid == other.pid and box == other.box
 	end
@@ -61,4 +61,4 @@ class Rush::Process
 	def self.all
 		Rush::Box.new('localhost').processes
 	end
-end  
+end
