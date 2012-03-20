@@ -148,17 +148,16 @@ describe Rush::Dir do
 
 	it "can run a bash command within itself" do
 		system "echo test > #{@dir.full_path}/file"
-		@dir.bash("cat file").should == "test\n"
+		stdin, stdout, stderr, wait_thr = @dir.popen3("cat file")
+		wait_thr.value.exitstatus.should eq 0
+		stdout.read.should == "test\n"
 	end
 
 	it "can run bash within directories with spaces" do
 		@dir.create_dir('with space').create_file('file').write('test')
-		@dir["with space/"].bash("cat file").should == "test"
-	end
-
-	it "passes bash options (e.g., :user) through to the box bash command" do
-		@dir.should_receive(:bash).with('cmd', :opt1 => 1, :opt2 => 2)
-		@dir.bash('cmd', :opt1 => 1, :opt2 => 2)
+		stdin, stdout, stderr, wait_thr = @dir["with space/"].popen3("cat file")
+		wait_thr.value.exitstatus.should eq 0
+		stdout.read.should == "test"
 	end
 
 end

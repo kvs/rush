@@ -2,6 +2,7 @@ require 'fileutils'
 require 'yaml'
 require 'timeout'
 require 'drb'
+require 'open3'
 
 # Rush::Box uses a connection object to execute all rush commands.  If the box
 # is local, Rush::Connection::Local is created.  The local connection is the
@@ -80,16 +81,18 @@ class Rush::Connection
 	# Create an in-memory archive (tgz) of a file or dir, which can be
 	# transmitted to another server for a copy or move.  Note that archive
 	# operations have the dir name implicit in the archive.
-	def read_archive(full_path)
-		`cd #{Rush.quote(::File.dirname(full_path))}; tar c #{Rush.quote(::File.basename(full_path))}`
-	end
+	# FIXME
+	# def read_archive(full_path)
+	# 	`cd #{Rush.quote(::File.dirname(full_path))}; tar c #{Rush.quote(::File.basename(full_path))}`
+	# end
 
 	# Extract an in-memory archive to a dir.
-	def write_archive(archive, dir)
-		IO.popen("cd #{Rush::quote(dir)}; tar x", "w") do |p|
-			p.write archive
-		end
-	end
+	# FIXME
+	# def write_archive(archive, dir)
+	# 	IO.popen("cd #{Rush::quote(dir)}; tar x", "w") do |p|
+	# 		p.write archive
+	# 	end
+	# end
 
 	# Get an index of files from the given path with the glob.  Could return
 	# nested values if the glob contains a doubleglob.  The return value is an
@@ -309,54 +312,9 @@ class Rush::Connection
 		# if it's dead, great - do nothing
 	end
 
-	def bash(command, user=nil, background=false)
-		return bash_background(command, user) if background
-
-		require 'session'
-
-		sh = Session::Bash.new
-
-		if user and user != ""
-			out, err = sh.execute "cd /; sudo -H -u #{user} bash", :stdin => command
-		else
-			out, err = sh.execute command
-		end
-
-		retval = sh.status
-		sh.close!
-
-		raise(Rush::BashFailed, err) if retval != 0
-
-		out
-	end
-
-	def bash_background(command, user)
-		pid = fork do
-			inpipe, outpipe = IO.pipe
-
-			outpipe.write command
-			outpipe.close
-			STDIN.reopen(inpipe)
-
-			close_all_descriptors([inpipe.to_i])
-
-			if user and user != ''
-				exec "cd /; sudo -H -u #{user} bash"
-			else
-				exec "bash"
-			end
-		end
-
-		Process::detach pid
-
-		pid
-	end
-
-	def close_all_descriptors(keep_open = [])
-		3.upto(256) do |fd|
-			next if keep_open.include?(fd)
-			IO::new(fd).close rescue nil
-		end
+	# Call Open3.popen3 - spawns a command in the background.
+	def popen3(*args, &block)
+		Open3.popen3(*args, &block)
 	end
 
 	####################################

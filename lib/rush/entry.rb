@@ -50,10 +50,6 @@ class Rush::Entry
 		"#{@path}/#{@name}"
 	end
 
-	def quoted_path
-		Rush.quote(full_path)
-	end
-
 	# Return true if the entry currently exists on the filesystem of the box.
 	def exists?
 		stat

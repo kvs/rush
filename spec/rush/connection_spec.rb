@@ -88,16 +88,19 @@ describe Rush::Connection do
 	end
 
 	it "read_archive to pull an archive of a dir into a byte stream" do
+		pending
 		system "touch #{@sandbox_dir}/a"
 		@con.read_archive(@sandbox_dir).size.should > 50
 	end
 
 	it "read_archive works for paths with spaces" do
+		pending
 		system "mkdir -p #{@sandbox_dir}/with\\ space; touch #{@sandbox_dir}/with\\ space/a"
 		@con.read_archive("#{@sandbox_dir}/with space").size.should > 50
 	end
 
 	it "write_archive to turn a byte stream into a dir" do
+		pending
 		system "cd #{@sandbox_dir}; mkdir -p a; touch a/b; tar cf xfer.tar a; mkdir dst"
 		archive = File.read("#{@sandbox_dir}/xfer.tar")
 		@con.write_archive(archive, "#{@sandbox_dir}/dst")
@@ -106,6 +109,7 @@ describe Rush::Connection do
 	end
 
 	it "write_archive works for paths with spaces" do
+		pending
 		system "cd #{@sandbox_dir}; mkdir -p a; touch a/b; tar cf xfer.tar a; mkdir with\\ space"
 		archive = File.read("#{@sandbox_dir}/xfer.tar")
 		@con.write_archive(archive, "#{@sandbox_dir}/with space")
@@ -210,20 +214,16 @@ EOPS
 		lambda { @con.kill_process(123) }.should_not raise_error
 	end
 
-	it "executes a bash command, returning stdout when successful" do
-		@con.bash("echo test").should == "test\n"
-	end
+	it "executes commands via popen3" do
+		stdin, stdout, stderr, wait_thr = @con.popen3("echo test")
+		wait_thr.value.exitstatus.should eq 0
+		stdout.read.should eq "test\n"
+		stderr.read.should eq ""
 
-	it "executes a bash command, raising and error (with stderr as the message) when return value is nonzero" do
-		lambda { @con.bash("no_such_bin") }.should raise_error(Rush::BashFailed, /command not found/)
-	end
-
-	it "executes a bash command as another user using sudo" do
-		@con.bash("echo test2", ENV['USER']).should == "test2\n"
-	end
-
-	it "executes a bash command in the background, returning the pid" do
-		@con.bash("true", nil, true).should > 0
+		stdin, stdout, stderr, wait_thr = @con.popen3({ 'TEST' => 'test' }, "echo $TEST")
+		wait_thr.value.exitstatus.should eq 0
+		stdout.read.should eq "test\n"
+		stderr.read.should eq ""
 	end
 
 	it "always returns true on alive?" do

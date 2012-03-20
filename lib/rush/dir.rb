@@ -120,9 +120,12 @@ class Rush::Dir < Rush::Entry
 		end
 	end
 
-	# Run a bash command starting in this directory.  Options are the same as Rush::Box#bash.
-	def bash(command, options={})
-		box.bash "cd #{quoted_path} && #{command}", options
+	# Execute a command in this directory.  Options are the same as Rush::Box#popen3.
+	def popen3(*args, &block)
+		options = {}
+		options = args.pop if args.last.is_a? Hash
+		options[:chdir] = full_path
+		box.popen3(*args, options, &block)
 	end
 
 	# Destroy all of the contents of the directory, leaving it fresh and clean.

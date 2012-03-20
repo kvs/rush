@@ -11,11 +11,6 @@ module Rush
 		Rush::Box.new
 	end
 
-	# Quote a path for use in backticks, say.
-	def self.quote(path)
-		path.gsub(/(?=[^a-zA-Z0-9_.\/\-\x7F-\xFF\n])/n, '\\').gsub(/\n/, "'\n'").sub(/^$/, "''")
-	end
-
 	# Return a String of the source code for the entire Rush library.
 	def self.library_data
 		parent = ::File.dirname(__FILE__)
